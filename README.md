@@ -18,3 +18,13 @@ Serve `dist/` with any static server, for example `python3 -m http.server 5174 -
 - `dist/assets/`: original generated production artwork
 
 External fonts are optional; Georgia and system sans-serif fallbacks are supplied. No analytics or uploaded photos.
+
+## Play online
+
+[Play AFTER SCHOOL](https://wuisabel-gif.github.io/after-school/)
+
+![AFTER SCHOOL studio](docs/studio.png)
+
+## Deployment
+
+GitHub Actions publishes `dist/` to GitHub Pages after every push to `main`. All asset and module paths are relative, so the game runs under the repository's Pages path. There are no server-side services or secrets.
