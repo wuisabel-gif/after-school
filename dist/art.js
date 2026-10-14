@@ -3,6 +3,8 @@ const poseCenters={};
 export async function loadArt(){await Promise.all(['characters','wardrobe','dressing-room','hairstyles','jewelry','romantic','pose-hip','pose-peace','expressions'].map(name=>new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>{images[name]=image;if(name.startsWith('pose-')){const probe=document.createElement('canvas');probe.width=image.width;probe.height=image.height;const ctx=probe.getContext('2d');ctx.drawImage(image,0,0);const row=ctx.getImageData(0,50,image.width,1).data,cell=image.width/9;poseCenters[name]=Array.from({length:9},(_,i)=>{let min=Infinity,max=-Infinity;for(let x=Math.ceil(i*cell);x<Math.floor((i+1)*cell);x++)if(row[x*4+3]>60){min=Math.min(min,x);max=Math.max(max,x);}return min===Infinity?(i+.5)*cell:(min+max)/2;});}resolve()};image.onerror=()=>reject(new Error(`Could not load ${name}`));image.src=`assets/${name}.png`;})));}
 const scratch=document.createElement('canvas');scratch.width=300;scratch.height=900;
 const raisedHand=document.createElement('canvas');raisedHand.width=300;raisedHand.height=900;
+const expressionLayer=document.createElement('canvas');expressionLayer.width=300;expressionLayer.height=200;
+const expressionMask=document.createElement('canvas');expressionMask.width=300;expressionMask.height=200;
 function removePoseIslands(c){
   const frame=c.getImageData(0,0,300,900),p=frame.data,seen=new Uint8Array(270000),queue=new Int32Array(270000);
   for(let start=0;start<270000;start++){
@@ -23,11 +25,13 @@ export const hairs=['#28211e','#65372e','#864248','#b49063'];
 const clamp=n=>Math.max(0,Math.min(255,n));
 export function renderDoll(state){const c=scratch.getContext('2d',{willReadFrequently:true});c.clearRect(0,0,300,900);if(state.pose>0){const name=state.pose===1?'pose-hip':'pose-peace',atlas=images[name],cell=atlas.width/9,sx=poseCenters[name][state.outfit]-155*cell/300;c.save();c.beginPath();const hem=state.outfit===4?900:state.outfit===7?730:state.outfit===5?610:state.outfit===6?570:state.outfit===8?530:510;c.moveTo(40,0);c.lineTo(255,0);c.lineTo(287,180);c.lineTo(284,hem);c.lineTo(224,hem+35);c.lineTo(224,900);c.lineTo(76,900);c.lineTo(76,hem+35);c.lineTo(17,hem);c.lineTo(13,180);c.closePath();c.clip();c.drawImage(atlas,sx,25,cell,atlas.height-25,0,0,300,900);c.restore();removePoseIslands(c);}else if(state.outfit>=6){const atlas=images.romantic,centers=[325,888,1450];c.drawImage(atlas,centers[state.outfit-6]-154,0,300,887,0,0,300,900);}else{const atlas=images.characters;const sx=12+state.outfit*295.5;c.drawImage(atlas,sx,0,Math.min(295.5,atlas.width-sx),887,0,0,300,900);}
 // Swap the head silhouette while preserving each outfit's collar and shoulders.
-if(state.hairstyle>0){
-  if(state.pose===2){const h=raisedHand.getContext('2d');h.clearRect(0,0,300,900);h.drawImage(scratch,0,0);}c.clearRect(0,0,300,145);
+if(state.hairstyle>0||state.pose>0){
+  if(state.pose===2){const h=raisedHand.getContext('2d');h.clearRect(0,0,300,900);h.drawImage(scratch,0,0);}
+  c.clearRect(0,0,300,145);
+  c.clearRect(139,145,36,16);
   c.clearRect(78,145,48,13); c.clearRect(190,145,48,13);
   const head=images.hairstyles,cell=head.width/4;
-  c.save(); c.beginPath(); c.rect(0,0,300,145); c.rect(0,145,139,100); c.rect(174,145,126,100); c.clip();
+  c.save(); c.beginPath(); c.rect(0,0,300,145); c.rect(0,145,139,100); c.rect(139,145,36,16); c.rect(174,145,126,100); c.clip();
   c.drawImage(head,state.hairstyle*cell,0,cell,head.height,79,0,152,203);
   c.restore();
   if(state.pose===2){c.save();c.beginPath();c.moveTo(48,75);c.lineTo(82,70);c.lineTo(101,106);c.lineTo(100,143);c.lineTo(86,183);c.lineTo(58,177);c.closePath();c.clip();c.drawImage(raisedHand,0,0);c.restore();}
@@ -36,8 +40,12 @@ if(state.hairstyle>0){
 if(state.hair||(state.shoes&&state.outfit<6)){const frame=c.getImageData(0,0,300,900),p=frame.data;const hairTints=[[0,0,0],[30,10,2],[53,7,18],[86,58,24]],shoeTints=[[0,0,0],[58,6,15],[110,97,75]];for(let y=0;y<900;y++)for(let x=0;x<300;x++){const i=(y*300+x)*4;if(p[i+3]<30)continue;const light=(p[i]+p[i+1]+p[i+2])/3;const facialFeature=(y>76&&y<94&&x>120&&x<193)||(y>101&&y<137&&x>123&&x<190);const neutralDark=light<94&&Math.max(p[i],p[i+1],p[i+2])-Math.min(p[i],p[i+1],p[i+2])<35;const isHair=y<(state.hairstyle>0?204:166)&&x>78&&x<238&&!facialFeature&&neutralDark;const isBoot=state.outfit<6&&y>(state.outfit===4?817:700)&&x>91&&x<215;const tint=isHair?hairTints[state.hair]:isBoot?shoeTints[state.shoes]:null;if(tint){const fade=isHair?Math.min(1,(100-light)/24):Math.min(1,Math.max(0,(y-(state.outfit===4?817:700))/10));const amount=(.45+light/150)*fade;for(let k=0;k<3;k++)p[i+k]=clamp(p[i+k]+tint[k]*amount);}}c.putImageData(frame,0,0);}
 if(state.faceFrame>0){
 const face=images.expressions,cell=face.width/4;
-c.save();c.beginPath();c.moveTo(122,78);c.quadraticCurveTo(155,70,192,78);c.lineTo(189,108);c.quadraticCurveTo(157,143,126,109);c.closePath();c.clip();
-c.drawImage(face,state.faceFrame*cell,0,cell,face.height,79,0,152,193);c.restore();
+const e=expressionLayer.getContext('2d');e.clearRect(0,0,300,200);
+e.drawImage(face,state.faceFrame*cell,0,cell,face.height,79,0,152,193);
+const m=expressionMask.getContext('2d');m.clearRect(0,0,300,200);
+const regions=state.faceFrame===3?[[156,114,19]]:[[136,91,24],[179,91,24]];
+for(const [x,y,r] of regions){const mask=m.createRadialGradient(x,y,r*.52,x,y,r);mask.addColorStop(0,'#000');mask.addColorStop(1,'#0000');m.fillStyle=mask;m.fillRect(x-r,y-r,r*2,r*2);}
+e.globalCompositeOperation='destination-in';e.drawImage(expressionMask,0,0);e.globalCompositeOperation='source-over';c.drawImage(expressionLayer,0,0);
 }
 // Makeup is composited on the same portrait used in both views and export.
 c.save();c.globalCompositeOperation='source-over';c.globalAlpha=.52;c.fillStyle=lips[state.lip];c.beginPath();c.moveTo(146,113);c.quadraticCurveTo(151,108,156,112);c.quadraticCurveTo(162,108,166,113);c.quadraticCurveTo(156,123,146,113);c.fill();c.globalAlpha=state.blush/165;for(const x of [133,180]){const g=c.createRadialGradient(x,100,1,x,100,15);g.addColorStop(0,'#ce6c79');g.addColorStop(1,'#ce6c7900');c.fillStyle=g;c.fillRect(x-16,86,32,28);}c.globalAlpha=.9;c.strokeStyle='#2d1c25';c.lineWidth=state.liner===2?2:state.liner===1?1.25:.2;if(state.liner&&state.faceFrame!==1&&state.faceFrame!==2){for(const [a,b] of [[127,146],[168,187]]){c.beginPath();c.moveTo(a,85);c.quadraticCurveTo((a+b)/2,80,b,84);if(state.liner===2)c.lineTo(b+4,80);c.stroke();}}c.restore();

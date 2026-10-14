@@ -49,9 +49,12 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 let motionOn=!reduced.matches,showOff=false,animationTime=0,lastFrame=0,lastPoseAt=0,lastPaint=0;
 function animatePoseChange(){
  if(reduced.matches||!motionOn)return;
- const original=$('#character'),ghost=document.createElement('canvas');ghost.width=600;ghost.height=1800;ghost.className='pose-ghost';ghost.setAttribute('aria-hidden','true');ghost.getContext('2d').drawImage(original,0,0);original.after(ghost);
- ghost.animate([{opacity:.85,transform:'translateX(-50%) rotate(0deg)'},{opacity:0,transform:'translateX(-50%) rotate(-2deg) translateY(-5px)'}],{duration:420,easing:'ease-out'}).finished.then(()=>ghost.remove()).catch(()=>ghost.remove());
- original.animate([{opacity:.1},{opacity:1}],{duration:420,easing:'ease-out'});
+ // Animate one canvas only: a crossfade leaves two full faces visible at once.
+ $('#character').animate([
+  {transform:'translateX(-50%) scale(.985) rotate(-.4deg)'},
+  {transform:'translateX(-50%) scale(1.012) rotate(.5deg)',offset:.5},
+  {transform:'translateX(-50%) scale(1) rotate(0deg)'}
+ ],{duration:360,easing:'ease-in-out'});
 }
 function paintAnimation(t){
  if(!ready)return;
