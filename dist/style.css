@@ -9,3 +9,6 @@
 .swatch canvas{display:block;width:100%;height:100%;object-fit:cover}.liner canvas{width:100%;height:37px;object-fit:cover;display:block;margin-bottom:4px}
 @media(max-width:720px){.liner canvas{height:24px}}
 @media(max-width:720px){.toolbar{display:grid;grid-template-columns:.9fr 1.25fr 1.45fr;gap:6px}.toolbar button{font-size:14px;white-space:nowrap;padding:13px 4px}.toolbar button span{margin-right:2px}}
+.hairstyle-options{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.hairstyle{padding:5px;font-size:15px;line-height:1.3}.hairstyle canvas{display:block;width:100%;height:95px;object-fit:contain}.hairstyle[aria-pressed=true]{border:2px solid var(--wine);padding:4px}.jewelry-tabs{display:flex;gap:8px;margin:12px 0 0}.jewelry-tabs[hidden]{display:none}.jewelry-tabs button{flex:1;border:none;border-bottom:1px solid var(--line);font-size:15px;padding:7px 1px}.jewelry-tabs button[aria-pressed=true]{border-color:var(--wine);color:var(--wine)}
+@media(max-width:720px){.hairstyle canvas{height:65px}.hairstyle{font-size:12px}.jewelry-tabs button{font-size:15px}}
+@media(min-width:721px){.stage{align-self:start;height:calc(100svh - 94px)}.vanity:has(#hair-tab[aria-selected=true]) .portrait-frame{height:27vh}.vanity:has(#hair-tab[aria-selected=true]) .vanity-footer{display:none}.hairstyle canvas{height:75px}}
