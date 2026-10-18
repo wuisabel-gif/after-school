@@ -25,9 +25,8 @@ function shiftLegStance(c,outfit){
   const tops=[470,470,470,470,350,605,565,720,525],top=tops[outfit];
   c.clearRect(0,top,300,900-top);
   for(let y=top;y<900;y+=2){
-    const p=(y-top)/(900-top),bend=Math.sin(Math.PI*p),left=13*bend+4*p,right=2*p;
-    c.drawImage(stanceSource,0,y,156,2,left,y,156,2);
-    c.drawImage(stanceSource,144,y,156,2,144+right,y,156,2);
+    const p=(y-top)/(900-top),offset=8*Math.sin(Math.PI*p)+3*p;
+    c.drawImage(stanceSource,0,y,300,2,offset,y,300,2);
   }
 }
 export const lips=['#b88078','#bc797b','#a65c65','#8a413e','#621f36'];
