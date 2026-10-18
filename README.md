@@ -25,6 +25,28 @@ External fonts are optional; Georgia and system sans-serif fallbacks are supplie
 
 ![AFTER SCHOOL studio](docs/studio.png)
 
+## More screenshots
+
+### Punk styling and makeup
+
+![Leather jacket look with makeup controls](docs/punk-studio.png)
+
+### Romantic wardrobe and hairstyles
+
+![Floral outfit with long waves and the weight-shift pose](docs/romantic-studio.png)
+
+### Jewelry collection
+
+![Necklace choices alongside the styled character](docs/jewelry-studio.png)
+
+### Styling challenges
+
+![The three optional styling briefs](docs/styling-challenges.png)
+
+### On your phone
+
+<img src="docs/mobile-studio.png" alt="AFTER SCHOOL studio on a phone" width="390">
+
 ## Deployment
 
 GitHub Actions publishes `dist/` to GitHub Pages after every push to `main`. All asset and module paths are relative, so the game runs under the repository's Pages path. There are no server-side services or secrets.
