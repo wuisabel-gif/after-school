@@ -30,3 +30,5 @@ Corrected the first Weight shift implementation after its two overlapping half-b
 Replaced the procedural Weight shift entirely with newly generated full-figure artwork. Each of the nine outfits now has a coherent redrawn pose from shoulders through torso, hips, knees and shoes, with both arms relaxed and one leg naturally forward. Split the generated assets into padded punk and romantic sprite sheets to prevent neighboring limbs from entering another outfit's frame. Verified the complete 27-look outfit/pose matrix with no clipped or duplicated limbs.
 
 Fixed oversized-head appearance in Weight shift: the new sprite sheets used arbitrary source widths that compressed bodies horizontally, especially the romantic sheet. Source width now derives from source height and the canvas aspect ratio, preserving equal horizontal and vertical scale. Visually checked all 27 outfit/pose combinations including the floral dress.
+
+Fixed the clipped elbow in the hand-on-hip pose by widening its torso/arm crop to the full sprite width. Verified all outfit/pose combinations and the ivory blouse at 390x844 with no page errors; the complete bent sleeve is visible.
