@@ -3,7 +3,7 @@
 An English, single-player anime styling game inspired by romantic and punk fashion magazines. Original generated character, dressing-room and wardrobe art.
 
 ## Play
-Pick from nine coordinated outfits, with Punk and Romantic wardrobe filters. Change lipstick, blush, eyeliner, hairstyle, hair color and boot finish. Mix six necklaces with three earring styles and three bracelets. Choose Relaxed, Hand on hip or Peace sign, then select Neutral, Soft gaze, Eyes closed or Smile for the character's face. Follow one of three optional styling briefs and earn up to four stars. Undo or randomize, save up to 12 looks in your browser, and download styled portraits.
+Pick from nine coordinated outfits, with Punk and Romantic wardrobe filters. Change lipstick, blush, eyeliner, hairstyle, hair color and boot finish. Mix six necklaces with three earring styles and three bracelets. Choose Relaxed, Hand on hip or Weight shift, then select Neutral, Soft gaze, Eyes closed or Smile for the character's face. Follow one of three optional styling briefs and earn up to four stars. Undo or randomize, save up to 12 looks in your browser, and download styled portraits.
 
 This edition uses complete outfit sprites, rather than freely mixing every top and bottom. Hair controls offer a tousled bob, long waves, high ponytail and twin braids, each with four colors. Punk looks offer three platform-boot finishes; romantic looks have coordinated shoes. Makeup, hair, jewelry, pose and facial expression are reflected in the close-up, saved look and downloaded portrait.
 

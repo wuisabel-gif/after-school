@@ -1,8 +1,8 @@
 export const images = {};
 const poseCenters={};
-export async function loadArt(){await Promise.all(['characters','wardrobe','dressing-room','hairstyles','jewelry','romantic','pose-hip','pose-peace','expressions'].map(name=>new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>{images[name]=image;if(name.startsWith('pose-')){const probe=document.createElement('canvas');probe.width=image.width;probe.height=image.height;const ctx=probe.getContext('2d');ctx.drawImage(image,0,0);const row=ctx.getImageData(0,50,image.width,1).data,cell=image.width/9;poseCenters[name]=Array.from({length:9},(_,i)=>{let min=Infinity,max=-Infinity;for(let x=Math.ceil(i*cell);x<Math.floor((i+1)*cell);x++)if(row[x*4+3]>60){min=Math.min(min,x);max=Math.max(max,x);}return min===Infinity?(i+.5)*cell:(min+max)/2;});}resolve()};image.onerror=()=>reject(new Error(`Could not load ${name}`));image.src=`assets/${name}.png`;})));}
+export async function loadArt(){await Promise.all(['characters','wardrobe','dressing-room','hairstyles','jewelry','romantic','pose-hip','expressions'].map(name=>new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>{images[name]=image;if(name.startsWith('pose-')){const probe=document.createElement('canvas');probe.width=image.width;probe.height=image.height;const ctx=probe.getContext('2d');ctx.drawImage(image,0,0);const row=ctx.getImageData(0,50,image.width,1).data,cell=image.width/9;poseCenters[name]=Array.from({length:9},(_,i)=>{let min=Infinity,max=-Infinity;for(let x=Math.ceil(i*cell);x<Math.floor((i+1)*cell);x++)if(row[x*4+3]>60){min=Math.min(min,x);max=Math.max(max,x);}return min===Infinity?(i+.5)*cell:(min+max)/2;});}resolve()};image.onerror=()=>reject(new Error(`Could not load ${name}`));image.src=`assets/${name}.png`;})));}
 const scratch=document.createElement('canvas');scratch.width=300;scratch.height=900;
-const raisedHand=document.createElement('canvas');raisedHand.width=300;raisedHand.height=900;
+const stanceSource=document.createElement('canvas');stanceSource.width=300;stanceSource.height=900;
 const expressionLayer=document.createElement('canvas');expressionLayer.width=300;expressionLayer.height=200;
 const expressionMask=document.createElement('canvas');expressionMask.width=300;expressionMask.height=200;
 function removePoseIslands(c){
@@ -20,13 +20,23 @@ function removePoseIslands(c){
   }
   c.putImageData(frame,0,0);
 }
+function shiftLegStance(c,outfit){
+  const source=stanceSource.getContext('2d');source.clearRect(0,0,300,900);source.drawImage(scratch,0,0);
+  const tops=[470,470,470,470,350,605,565,720,525],top=tops[outfit];
+  c.clearRect(0,top,300,900-top);
+  for(let y=top;y<900;y+=2){
+    const p=(y-top)/(900-top),bend=Math.sin(Math.PI*p),left=13*bend+4*p,right=2*p;
+    c.drawImage(stanceSource,0,y,156,2,left,y,156,2);
+    c.drawImage(stanceSource,144,y,156,2,144+right,y,156,2);
+  }
+}
 export const lips=['#b88078','#bc797b','#a65c65','#8a413e','#621f36'];
 export const hairs=['#28211e','#65372e','#864248','#b49063'];
 const clamp=n=>Math.max(0,Math.min(255,n));
-export function renderDoll(state){const c=scratch.getContext('2d',{willReadFrequently:true});c.clearRect(0,0,300,900);if(state.pose>0){const name=state.pose===1?'pose-hip':'pose-peace',atlas=images[name],cell=atlas.width/9,sx=poseCenters[name][state.outfit]-155*cell/300;c.save();c.beginPath();const hem=state.outfit===4?900:state.outfit===7?730:state.outfit===5?610:state.outfit===6?570:state.outfit===8?530:510;c.moveTo(40,0);c.lineTo(255,0);c.lineTo(287,180);c.lineTo(284,hem);c.lineTo(224,hem+35);c.lineTo(224,900);c.lineTo(76,900);c.lineTo(76,hem+35);c.lineTo(17,hem);c.lineTo(13,180);c.closePath();c.clip();c.drawImage(atlas,sx,25,cell,atlas.height-25,0,0,300,900);c.restore();removePoseIslands(c);}else if(state.outfit>=6){const atlas=images.romantic,centers=[325,888,1450];c.drawImage(atlas,centers[state.outfit-6]-154,0,300,887,0,0,300,900);}else{const atlas=images.characters;const sx=12+state.outfit*295.5;c.drawImage(atlas,sx,0,Math.min(295.5,atlas.width-sx),887,0,0,300,900);}
+export function renderDoll(state){const c=scratch.getContext('2d',{willReadFrequently:true});c.clearRect(0,0,300,900);if(state.pose===1){const name='pose-hip',atlas=images[name],cell=atlas.width/9,sx=poseCenters[name][state.outfit]-155*cell/300;c.save();c.beginPath();const hem=state.outfit===4?900:state.outfit===7?730:state.outfit===5?610:state.outfit===6?570:state.outfit===8?530:510;c.moveTo(40,0);c.lineTo(255,0);c.lineTo(287,180);c.lineTo(284,hem);c.lineTo(224,hem+35);c.lineTo(224,900);c.lineTo(76,900);c.lineTo(76,hem+35);c.lineTo(17,hem);c.lineTo(13,180);c.closePath();c.clip();c.drawImage(atlas,sx,25,cell,atlas.height-25,0,0,300,900);c.restore();removePoseIslands(c);}else if(state.outfit>=6){const atlas=images.romantic,centers=[325,888,1450];c.drawImage(atlas,centers[state.outfit-6]-154,0,300,887,0,0,300,900);}else{const atlas=images.characters;const sx=12+state.outfit*295.5;c.drawImage(atlas,sx,0,Math.min(295.5,atlas.width-sx),887,0,0,300,900);}
+if(state.pose===2)shiftLegStance(c,state.outfit);
 // Swap the head silhouette while preserving each outfit's collar and shoulders.
 if(state.hairstyle>0||state.pose>0){
-  if(state.pose===2){const h=raisedHand.getContext('2d');h.clearRect(0,0,300,900);h.drawImage(scratch,0,0);}
   c.clearRect(0,0,300,145);
   c.save();c.beginPath();c.moveTo(137,145);c.lineTo(177,145);c.lineTo(168,173);c.lineTo(146,173);c.closePath();c.clip();c.clearRect(130,140,55,40);c.restore();
   c.clearRect(78,145,48,13); c.clearRect(190,145,48,13);
@@ -34,7 +44,6 @@ if(state.hairstyle>0||state.pose>0){
   c.save(); c.beginPath(); c.rect(0,0,300,145); c.rect(0,145,137,100); c.moveTo(137,145);c.lineTo(177,145);c.lineTo(168,173);c.lineTo(146,173);c.closePath();c.rect(177,145,123,100); c.clip();
   c.drawImage(head,state.hairstyle*cell,0,cell,head.height,71,0,168,224);
   c.restore();
-  if(state.pose===2){c.save();c.beginPath();c.moveTo(48,75);c.lineTo(82,70);c.lineTo(101,106);c.lineTo(100,143);c.lineTo(86,183);c.lineTo(58,177);c.closePath();c.clip();c.drawImage(raisedHand,0,0);c.restore();}
 }
 // Local masks tint only existing illustrated hair/boot pixels; preserve their ink and texture.
 if(state.hair||(state.shoes&&state.outfit<6)){const frame=c.getImageData(0,0,300,900),p=frame.data;const hairTints=[[0,0,0],[30,10,2],[53,7,18],[86,58,24]],shoeTints=[[0,0,0],[58,6,15],[110,97,75]];for(let y=0;y<900;y++)for(let x=0;x<300;x++){const i=(y*300+x)*4;if(p[i+3]<30)continue;const light=(p[i]+p[i+1]+p[i+2])/3;const facialFeature=(y>83&&y<104&&x>117&&x<196)||(y>110&&y<149&&x>120&&x<193);const neutralDark=light<94&&Math.max(p[i],p[i+1],p[i+2])-Math.min(p[i],p[i+1],p[i+2])<35;const isHair=y<(state.hairstyle>0||state.pose>0?225:166)&&x>70&&x<240&&!facialFeature&&neutralDark;const isBoot=state.outfit<6&&y>(state.outfit===4?817:700)&&x>91&&x<215;const tint=isHair?hairTints[state.hair]:isBoot?shoeTints[state.shoes]:null;if(tint){const fade=isHair?Math.min(1,(100-light)/24):Math.min(1,Math.max(0,(y-(state.outfit===4?817:700))/10));const amount=(.45+light/150)*fade;for(let k=0;k<3;k++)p[i+k]=clamp(p[i+k]+tint[k]*amount);}}c.putImageData(frame,0,0);}
@@ -53,7 +62,7 @@ c.save();c.globalCompositeOperation='source-over';c.globalAlpha=.52;c.fillStyle=
 if(state.accessory>=0&&state.accessory<3){const w=images.wardrobe;const col=state.accessory;const boxes=[[35,877,375,336],[440,905,385,276],[866,886,368,345]];const [x,y,sw,sh]=boxes[col];c.drawImage(w,x,y,sw,sh,128,162,60,col===1?27:57);}
 if(state.accessory>=3){const j=images.jewelry,size=j.width/3;c.drawImage(j,(state.accessory-3)*size,0,size,size,126,159,63,65);}
 if(state.earrings>=0){const j=images.jewelry,size=j.width/3;const shapes=[[60,550,130,185],[480,465,130,350],[897,515,143,245]];const [x,y,w,h]=shapes[state.earrings];const width=state.earrings===0?8:9,height=state.earrings===1?27:16;for(const dx of [115,190])c.drawImage(j,x,y,w,h,dx,112,width,height);}
-if(state.bracelet>=0){const j=images.jewelry,size=j.width/3;c.save();c.translate(state.pose===1?97:state.pose===2?87:state.outfit===4?41:state.outfit===5?32:39,state.pose===1?327:state.pose===2?182:435);c.rotate(-.16);c.drawImage(j,state.bracelet*size,size*2,size,size,-9,-6,20,16);c.restore();}
+if(state.bracelet>=0){const j=images.jewelry,size=j.width/3;c.save();c.translate(state.pose===1?97:state.outfit===4?41:state.outfit===5?32:39,state.pose===1?327:435);c.rotate(-.16);c.drawImage(j,state.bracelet*size,size*2,size,size,-9,-6,20,16);c.restore();}
 return scratch;}
 const live=document.createElement('canvas');live.width=300;live.height=900;
 let liveKey='';
