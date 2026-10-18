@@ -38,17 +38,18 @@ if(state.hairstyle>0||state.pose>0){
 }
 // Local masks tint only existing illustrated hair/boot pixels; preserve their ink and texture.
 if(state.hair||(state.shoes&&state.outfit<6)){const frame=c.getImageData(0,0,300,900),p=frame.data;const hairTints=[[0,0,0],[30,10,2],[53,7,18],[86,58,24]],shoeTints=[[0,0,0],[58,6,15],[110,97,75]];for(let y=0;y<900;y++)for(let x=0;x<300;x++){const i=(y*300+x)*4;if(p[i+3]<30)continue;const light=(p[i]+p[i+1]+p[i+2])/3;const facialFeature=(y>76&&y<94&&x>120&&x<193)||(y>101&&y<137&&x>123&&x<190);const neutralDark=light<94&&Math.max(p[i],p[i+1],p[i+2])-Math.min(p[i],p[i+1],p[i+2])<35;const isHair=y<(state.hairstyle>0?204:166)&&x>78&&x<238&&!facialFeature&&neutralDark;const isBoot=state.outfit<6&&y>(state.outfit===4?817:700)&&x>91&&x<215;const tint=isHair?hairTints[state.hair]:isBoot?shoeTints[state.shoes]:null;if(tint){const fade=isHair?Math.min(1,(100-light)/24):Math.min(1,Math.max(0,(y-(state.outfit===4?817:700))/10));const amount=(.45+light/150)*fade;for(let k=0;k<3;k++)p[i+k]=clamp(p[i+k]+tint[k]*amount);}}c.putImageData(frame,0,0);}
-if(state.faceFrame>0){
+const faceFrame=state.expression??state.faceFrame??0;
+if(faceFrame>0){
 const face=images.expressions,cell=face.width/4;
 const e=expressionLayer.getContext('2d');e.clearRect(0,0,300,200);
-e.drawImage(face,state.faceFrame*cell,0,cell,face.height,79,0,152,193);
+e.drawImage(face,faceFrame*cell,0,cell,face.height,79,0,152,193);
 const m=expressionMask.getContext('2d');m.clearRect(0,0,300,200);
-const regions=state.faceFrame===3?[[156,114,19]]:[[136,91,24],[179,91,24]];
+const regions=faceFrame===3?[[156,114,19]]:[[136,91,24],[179,91,24]];
 for(const [x,y,r] of regions){const mask=m.createRadialGradient(x,y,r*.52,x,y,r);mask.addColorStop(0,'#000');mask.addColorStop(1,'#0000');m.fillStyle=mask;m.fillRect(x-r,y-r,r*2,r*2);}
 e.globalCompositeOperation='destination-in';e.drawImage(expressionMask,0,0);e.globalCompositeOperation='source-over';c.drawImage(expressionLayer,0,0);
 }
 // Makeup is composited on the same portrait used in both views and export.
-c.save();c.globalCompositeOperation='source-over';c.globalAlpha=.52;c.fillStyle=lips[state.lip];c.beginPath();c.moveTo(146,113);c.quadraticCurveTo(151,108,156,112);c.quadraticCurveTo(162,108,166,113);c.quadraticCurveTo(156,123,146,113);c.fill();c.globalAlpha=state.blush/165;for(const x of [133,180]){const g=c.createRadialGradient(x,100,1,x,100,15);g.addColorStop(0,'#ce6c79');g.addColorStop(1,'#ce6c7900');c.fillStyle=g;c.fillRect(x-16,86,32,28);}c.globalAlpha=.9;c.strokeStyle='#2d1c25';c.lineWidth=state.liner===2?2:state.liner===1?1.25:.2;if(state.liner&&state.faceFrame!==1&&state.faceFrame!==2){for(const [a,b] of [[127,146],[168,187]]){c.beginPath();c.moveTo(a,85);c.quadraticCurveTo((a+b)/2,80,b,84);if(state.liner===2)c.lineTo(b+4,80);c.stroke();}}c.restore();
+c.save();c.globalCompositeOperation='source-over';c.globalAlpha=.52;c.fillStyle=lips[state.lip];c.beginPath();c.moveTo(146,113);c.quadraticCurveTo(151,108,156,112);c.quadraticCurveTo(162,108,166,113);c.quadraticCurveTo(156,123,146,113);c.fill();c.globalAlpha=state.blush/165;for(const x of [133,180]){const g=c.createRadialGradient(x,100,1,x,100,15);g.addColorStop(0,'#ce6c79');g.addColorStop(1,'#ce6c7900');c.fillStyle=g;c.fillRect(x-16,86,32,28);}c.globalAlpha=.9;c.strokeStyle='#2d1c25';c.lineWidth=state.liner===2?2:state.liner===1?1.25:.2;if(state.liner&&faceFrame!==1&&faceFrame!==2){for(const [a,b] of [[127,146],[168,187]]){c.beginPath();c.moveTo(a,85);c.quadraticCurveTo((a+b)/2,80,b,84);if(state.liner===2)c.lineTo(b+4,80);c.stroke();}}c.restore();
 if(state.accessory>=0&&state.accessory<3){const w=images.wardrobe;const col=state.accessory;const boxes=[[35,877,375,336],[440,905,385,276],[866,886,368,345]];const [x,y,sw,sh]=boxes[col];c.drawImage(w,x,y,sw,sh,128,154,60,col===1?27:57);}
 if(state.accessory>=3){const j=images.jewelry,size=j.width/3;c.drawImage(j,(state.accessory-3)*size,0,size,size,126,151,63,65);}
 if(state.earrings>=0){const j=images.jewelry,size=j.width/3;const shapes=[[60,550,130,185],[480,465,130,350],[897,515,143,245]];const [x,y,w,h]=shapes[state.earrings];const width=state.earrings===0?8:9,height=state.earrings===1?27:16;for(const dx of [119,185])c.drawImage(j,x,y,w,h,dx,103,width,height);}
@@ -57,8 +58,8 @@ return scratch;}
 const live=document.createElement('canvas');live.width=300;live.height=900;
 let liveKey='';
 export function drawViews(state,frame={}){
- const key=JSON.stringify([state,frame.faceFrame||0]);
- if(key!==liveKey){const l=live.getContext('2d');l.clearRect(0,0,300,900);l.drawImage(renderDoll({...state,faceFrame:frame.faceFrame||0}),0,0);liveKey=key;}
+ const selectedFace=frame.faceFrame??state.expression??0,key=JSON.stringify([state,selectedFace]);
+ if(key!==liveKey){const l=live.getContext('2d');l.clearRect(0,0,300,900);l.drawImage(renderDoll({...state,expression:selectedFace}),0,0);liveKey=key;}
  const canvas=document.querySelector('#character'),c=canvas.getContext('2d');c.clearRect(0,0,600,1800);
  c.save();c.scale(2,2);c.drawImage(live,0,165,300,735,0,165,300,735);
  c.translate(155,151);c.rotate(frame.tilt||0);c.translate(-155,-151);c.drawImage(live,0,0,300,169,0,frame.headY||0,300,169);c.restore();
