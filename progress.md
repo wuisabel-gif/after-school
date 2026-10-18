@@ -32,3 +32,5 @@ Replaced the procedural Weight shift entirely with newly generated full-figure a
 Fixed oversized-head appearance in Weight shift: the new sprite sheets used arbitrary source widths that compressed bodies horizontally, especially the romantic sheet. Source width now derives from source height and the canvas aspect ratio, preserving equal horizontal and vertical scale. Visually checked all 27 outfit/pose combinations including the floral dress.
 
 Fixed the clipped elbow in the hand-on-hip pose by widening its torso/arm crop to the full sprite width. Verified all outfit/pose combinations and the ivory blouse at 390x844 with no page errors; the complete bent sleeve is visible.
+
+Fixed makeup falling below the default face: relaxed bob had bypassed the shared head composition while makeup used its newer coordinates. Every hairstyle/pose now uses the same head placement, and cosmetic thumbnail crops follow that placement. Refreshed all README screenshots from the corrected build. Inspected the default full-figure render and studio close-up; standard runner passed.
