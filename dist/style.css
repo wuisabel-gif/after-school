@@ -14,3 +14,32 @@
 @media(min-width:721px){.stage{align-self:start;height:calc(100svh - 94px)}.vanity:has(#hair-tab[aria-selected=true]) .portrait-frame{height:27vh}.vanity:has(#hair-tab[aria-selected=true]) .vanity-footer{display:none}.hairstyle canvas{height:75px}}
 .character-controls{position:absolute;top:12px;left:3%;right:3%;z-index:3;display:grid;gap:5px;justify-items:center}.control-row{display:flex;gap:5px;justify-content:center;flex-wrap:wrap}.control-row>span{background:#29241fdd;color:var(--paper);font:11px 'DM Sans',sans-serif;letter-spacing:1.4px;text-transform:uppercase;padding:8px 9px}.control-row button{background:var(--paper);font-size:13px;padding:7px 9px;box-shadow:0 2px 6px #0002}.control-row button[aria-pressed=true]{background:var(--wine);color:var(--paper)}#style-filters[hidden]{display:none}@media(max-width:720px){.character-controls{top:8px;left:8px;right:8px;gap:4px}.control-row{gap:3px}.control-row>span,.control-row button{font-size:10px;padding:6px 7px}.stage>canvas{height:calc(100% - 145px)}.inventory:has(.item:nth-child(7)){grid-template-columns:repeat(3,1fr)}}
 #toast{visibility:hidden;pointer-events:none}#toast.visible{visibility:visible}
+/* Motion and polish: gentle sway, tactile buttons, softer entrances. */
+.stage>canvas{transform-origin:50% 100%;animation:sway 7s ease-in-out infinite,breathe 3.3s ease-in-out infinite}
+@keyframes breathe{50%{scale:1.004 1.009}}
+@keyframes sway{0%,100%{rotate:-.35deg}50%{rotate:.35deg}}
+@keyframes rise{from{opacity:0;translate:0 10px}}
+@keyframes pop{0%{scale:0}70%{scale:1.25}}
+@keyframes fade{from{opacity:0;translate:0 14px}}
+button:active:not(:disabled){transform:scale(.96)}
+.item{transition:background .18s,transform .22s,box-shadow .22s}.fresh .item{animation:rise .35s backwards}
+.item:nth-child(2){animation-delay:.04s}.item:nth-child(3){animation-delay:.08s}.item:nth-child(4){animation-delay:.12s}.item:nth-child(5){animation-delay:.16s}.item:nth-child(n+6){animation-delay:.2s}
+.item:hover{background:#fff6;transform:translateY(-3px);box-shadow:0 8px 18px #3023181f}
+.item canvas{transition:scale .3s}.item:hover canvas{scale:1.04}
+.item.selected:after{animation:pop .3s}
+.swatch,.liner,.hairstyle{transition:transform .2s,outline-offset .2s}.swatch:hover,.liner:hover,.hairstyle:hover{transform:translateY(-2px)}
+.character-controls{top:14px}.control-row{background:#f3ecdcd9;backdrop-filter:blur(6px);padding:4px;border-radius:999px;box-shadow:0 3px 14px #0002;gap:3px;flex-wrap:nowrap}
+.control-row>span{border-radius:999px}.control-row button{border:0;border-radius:999px;box-shadow:none;background:transparent;transition:background .2s,color .2s}
+.control-row button:hover{background:#e3d5c1}.control-row button[aria-pressed=true]{background:var(--wine)}
+.toolbar button{transition:transform .18s,box-shadow .18s,filter .18s}.toolbar button:hover{transform:translateY(-2px);box-shadow:0 6px 14px #0003}
+.challenge-note,.stage-signature{transition:rotate .3s}.challenge-note:hover{rotate:2deg}.stage-signature:hover{rotate:-4deg}
+.portrait-frame{transition:transform .3s}.portrait-frame:hover{transform:rotate(0) scale(1.01)}
+dialog[open]{animation:fade .3s cubic-bezier(.2,.8,.2,1)}dialog[open]::backdrop{animation:rise .3s}
+@media(min-width:1101px){.stage{min-height:700px}}
+@media(max-width:720px){.control-row{padding:3px}}
+@media(prefers-reduced-motion:reduce){*,::backdrop{animation:none!important}}
+@media(min-width:721px){.stage>canvas{height:calc(100% - 180px)}}@media(min-width:721px) and (max-width:1100px){.stage>canvas{height:calc(100% - 215px)}}
+#done-count{font-size:13px}.challenge-note #challenge-progress{font-size:17px;letter-spacing:3px;color:var(--wine);margin:4px 0 8px;transform-origin:left}
+.challenge-card.done{background:#fff5}
+.toolbar b{font-weight:inherit}.challenge-card{position:relative}.challenge-card .today{position:absolute;top:10px;right:12px;font:11px 'DM Sans',sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--wine)}.dialog-button.secondary{background:transparent;color:var(--ink);border:1px solid var(--line)}
+@media(max-width:720px){.toolbar{grid-template-columns:auto auto 1.2fr 1.4fr}.toolbar #undo b,.toolbar #redo b{display:none}.toolbar #undo,.toolbar #redo{padding:13px 12px}}

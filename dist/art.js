@@ -58,8 +58,7 @@ export function drawViews(state,frame={}){
  const selectedFace=frame.faceFrame??state.expression??0,key=JSON.stringify([state,selectedFace]);
  if(key!==liveKey){const l=live.getContext('2d');l.clearRect(0,0,300,900);l.drawImage(renderDoll({...state,expression:selectedFace}),0,0);liveKey=key;}
  const canvas=document.querySelector('#character'),c=canvas.getContext('2d');c.clearRect(0,0,600,1800);
- c.save();c.scale(2,2);c.drawImage(live,0,165,300,735,0,165,300,735);
- c.translate(155,151);c.rotate(frame.tilt||0);c.translate(-155,-151);c.drawImage(live,0,0,300,169,0,frame.headY||0,300,169);c.restore();
+ c.drawImage(live,0,0,600,1800); // ponytail: whole figure moves via CSS; splitting the head here left a shoulder seam
  const portrait=document.querySelector('#portrait'),p=portrait.getContext('2d');p.fillStyle='#d6c6b3';p.fillRect(0,0,400,440);p.save();p.translate(200,300);p.rotate((frame.tilt||0)*.6);p.translate(-200,-300);p.drawImage(live,67,8,177,210,0,(frame.headY||0)*1.5,400,475);p.restore();
 }
 
