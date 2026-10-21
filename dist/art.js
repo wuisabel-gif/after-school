@@ -1,6 +1,6 @@
 export const images = {};
 const poseCenters={};
-export async function loadArt(){await Promise.all(['characters','wardrobe','dressing-room','hairstyles','jewelry','romantic','pose-hip','pose-shift-punk','pose-shift-romantic','expressions'].map(name=>new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>{images[name]=image;if(name.startsWith('pose-')){const count=name==='pose-shift-punk'?5:name==='pose-shift-romantic'?4:9,probe=document.createElement('canvas');probe.width=image.width;probe.height=image.height;const ctx=probe.getContext('2d');ctx.drawImage(image,0,0);const row=ctx.getImageData(0,50,image.width,1).data,cell=image.width/count;poseCenters[name]=Array.from({length:count},(_,i)=>{let min=Infinity,max=-Infinity;for(let x=Math.ceil(i*cell);x<Math.floor((i+1)*cell);x++)if(row[x*4+3]>60){min=Math.min(min,x);max=Math.max(max,x);}return min===Infinity?(i+.5)*cell:(min+max)/2;});}resolve()};image.onerror=()=>reject(new Error(`Could not load ${name}`));image.src=`assets/${name}.png`;})));}
+export async function loadArt(){await Promise.all(['characters','wardrobe','dressing-room','hairstyles','jewelry','romantic','pose-hip','pose-shift-punk','pose-shift-romantic','expressions','hachi-hairstyles','hachi-expressions'].map(name=>new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>{images[name]=image;if(name.startsWith('pose-')){const count=name==='pose-shift-punk'?5:name==='pose-shift-romantic'?4:9,probe=document.createElement('canvas');probe.width=image.width;probe.height=image.height;const ctx=probe.getContext('2d');ctx.drawImage(image,0,0);const row=ctx.getImageData(0,50,image.width,1).data,cell=image.width/count;poseCenters[name]=Array.from({length:count},(_,i)=>{let min=Infinity,max=-Infinity;for(let x=Math.ceil(i*cell);x<Math.floor((i+1)*cell);x++)if(row[x*4+3]>60){min=Math.min(min,x);max=Math.max(max,x);}return min===Infinity?(i+.5)*cell:(min+max)/2;});}resolve()};image.onerror=()=>reject(new Error(`Could not load ${name}`));image.src=`assets/${name}.png`;})));}
 const scratch=document.createElement('canvas');scratch.width=300;scratch.height=900;
 const expressionLayer=document.createElement('canvas');expressionLayer.width=300;expressionLayer.height=200;
 const expressionMask=document.createElement('canvas');expressionMask.width=300;expressionMask.height=200;
@@ -28,7 +28,7 @@ export function renderDoll(state){const c=scratch.getContext('2d',{willReadFrequ
   c.clearRect(0,0,300,145);
   c.save();c.beginPath();c.moveTo(137,145);c.lineTo(177,145);c.lineTo(168,173);c.lineTo(146,173);c.closePath();c.clip();c.clearRect(130,140,55,40);c.restore();
   c.clearRect(78,145,48,13); c.clearRect(190,145,48,13);
-  const head=images.hairstyles,cell=head.width/4;
+  const head=images[state.face===1?'hachi-hairstyles':'hairstyles'],cell=head.width/4;
   c.save(); c.beginPath(); c.rect(0,0,300,145); c.rect(0,145,137,100); c.moveTo(137,145);c.lineTo(177,145);c.lineTo(168,173);c.lineTo(146,173);c.closePath();c.rect(177,145,123,100); c.clip();
   c.drawImage(head,state.hairstyle*cell,0,cell,head.height,71,0,168,224);
   c.restore();
@@ -37,22 +37,13 @@ export function renderDoll(state){const c=scratch.getContext('2d',{willReadFrequ
 if(state.hair||(state.shoes&&state.outfit<6)){const frame=c.getImageData(0,0,300,900),p=frame.data;const hairTints=[[0,0,0],[30,10,2],[53,7,18],[86,58,24]],shoeTints=[[0,0,0],[58,6,15],[110,97,75]];for(let y=0;y<900;y++)for(let x=0;x<300;x++){const i=(y*300+x)*4;if(p[i+3]<30)continue;const light=(p[i]+p[i+1]+p[i+2])/3;const facialFeature=(y>83&&y<104&&x>117&&x<196)||(y>110&&y<149&&x>120&&x<193);const neutralDark=light<94&&Math.max(p[i],p[i+1],p[i+2])-Math.min(p[i],p[i+1],p[i+2])<35;const isHair=y<225&&x>70&&x<240&&!facialFeature&&neutralDark;const isBoot=state.outfit<6&&y>(state.outfit===4?817:700)&&x>91&&x<215;const tint=isHair?hairTints[state.hair]:isBoot?shoeTints[state.shoes]:null;if(tint){const fade=isHair?Math.min(1,(100-light)/24):Math.min(1,Math.max(0,(y-(state.outfit===4?817:700))/10));const amount=(.45+light/150)*fade;for(let k=0;k<3;k++)p[i+k]=clamp(p[i+k]+tint[k]*amount);}}c.putImageData(frame,0,0);}
 const faceFrame=state.expression??state.faceFrame??0;
 if(faceFrame>0){
-const face=images.expressions,cell=face.width/4;
+const face=images[state.face===1?'hachi-expressions':'expressions'],cell=face.width/4;
 const e=expressionLayer.getContext('2d');e.clearRect(0,0,300,200);
 e.drawImage(face,faceFrame*cell,0,cell,face.height,71,0,168,213);
 const m=expressionMask.getContext('2d');m.clearRect(0,0,300,200);
 const regions=faceFrame===3?[[156,123,21]]:[[134,99,26],[181,99,26]];
 for(const [x,y,r] of regions){const mask=m.createRadialGradient(x,y,r*.52,x,y,r);mask.addColorStop(0,'#000');mask.addColorStop(1,'#0000');m.fillStyle=mask;m.fillRect(x-r,y-r,r*2,r*2);}
 e.globalCompositeOperation='destination-in';e.drawImage(expressionMask,0,0);e.globalCompositeOperation='source-over';c.drawImage(expressionLayer,0,0);
-}
-// Hachi's face: no separate art exists, so redraw the shared eyes larger and rounder with warm, bright irises.
-if(state.face===1){
-const e=expressionLayer.getContext('2d');e.clearRect(0,0,300,200);
-for(const [x,y] of [[136,93],[173,93]])e.drawImage(scratch,x-21,y-15,42,30,x-24.5,y-17.5,49,35);
-const m=expressionMask.getContext('2d');m.clearRect(0,0,300,200);
-for(const [x,y] of [[136,93],[173,93]]){const g=m.createRadialGradient(x,y,11,x,y,21);g.addColorStop(0,'#000');g.addColorStop(1,'#0000');m.fillStyle=g;m.fillRect(x-25,y-25,50,50);}
-e.globalCompositeOperation='destination-in';e.drawImage(expressionMask,0,0);e.globalCompositeOperation='source-over';c.drawImage(expressionLayer,0,0);
-if(faceFrame!==2){c.save();for(const [x,y] of [[136,92],[173,92]]){c.globalCompositeOperation='soft-light';c.globalAlpha=.85;const g=c.createRadialGradient(x,y,1,x,y,6);g.addColorStop(0,'#e7a04f');g.addColorStop(1,'#e7a04f00');c.fillStyle=g;c.fillRect(x-9,y-9,18,18);c.globalCompositeOperation='source-over';c.globalAlpha=.9;c.fillStyle='#fffaf0';c.beginPath();c.arc(x-2.5,y-2.5,1.6,0,7);c.fill();c.globalAlpha=.6;c.beginPath();c.arc(x+2,y+2,.8,0,7);c.fill();}c.restore();}
 }
 // Makeup is composited on the same portrait used in both views and export.
 c.save();c.globalCompositeOperation='source-over';c.globalAlpha=.52;c.fillStyle=lips[state.lip];c.beginPath();c.moveTo(145,123);c.quadraticCurveTo(151,117,156,121);c.quadraticCurveTo(163,117,168,123);c.quadraticCurveTo(156,134,145,123);c.fill();c.globalAlpha=state.blush/165;for(const x of [131,183]){const g=c.createRadialGradient(x,109,1,x,109,17);g.addColorStop(0,'#ce6c79');g.addColorStop(1,'#ce6c7900');c.fillStyle=g;c.fillRect(x-18,94,36,31);}c.globalAlpha=.9;c.strokeStyle='#2d1c25';c.lineWidth=state.liner===2?2:state.liner===1?1.25:.2;if(state.liner&&faceFrame!==1&&faceFrame!==2){for(const [a,b] of [[124,145],[170,192]]){c.beginPath();c.moveTo(a,93);c.quadraticCurveTo((a+b)/2,87,b,92);if(state.liner===2)c.lineTo(b+4,88);c.stroke();}}c.restore();
