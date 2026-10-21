@@ -45,6 +45,15 @@ const regions=faceFrame===3?[[156,123,21]]:[[134,99,26],[181,99,26]];
 for(const [x,y,r] of regions){const mask=m.createRadialGradient(x,y,r*.52,x,y,r);mask.addColorStop(0,'#000');mask.addColorStop(1,'#0000');m.fillStyle=mask;m.fillRect(x-r,y-r,r*2,r*2);}
 e.globalCompositeOperation='destination-in';e.drawImage(expressionMask,0,0);e.globalCompositeOperation='source-over';c.drawImage(expressionLayer,0,0);
 }
+// Hachi's face: no separate art exists, so redraw the shared eyes larger and rounder with warm, bright irises.
+if(state.face===1){
+const e=expressionLayer.getContext('2d');e.clearRect(0,0,300,200);
+for(const [x,y] of [[136,93],[173,93]])e.drawImage(scratch,x-21,y-15,42,30,x-24.5,y-17.5,49,35);
+const m=expressionMask.getContext('2d');m.clearRect(0,0,300,200);
+for(const [x,y] of [[136,93],[173,93]]){const g=m.createRadialGradient(x,y,11,x,y,21);g.addColorStop(0,'#000');g.addColorStop(1,'#0000');m.fillStyle=g;m.fillRect(x-25,y-25,50,50);}
+e.globalCompositeOperation='destination-in';e.drawImage(expressionMask,0,0);e.globalCompositeOperation='source-over';c.drawImage(expressionLayer,0,0);
+if(faceFrame!==2){c.save();for(const [x,y] of [[136,92],[173,92]]){c.globalCompositeOperation='soft-light';c.globalAlpha=.85;const g=c.createRadialGradient(x,y,1,x,y,6);g.addColorStop(0,'#e7a04f');g.addColorStop(1,'#e7a04f00');c.fillStyle=g;c.fillRect(x-9,y-9,18,18);c.globalCompositeOperation='source-over';c.globalAlpha=.9;c.fillStyle='#fffaf0';c.beginPath();c.arc(x-2.5,y-2.5,1.6,0,7);c.fill();c.globalAlpha=.6;c.beginPath();c.arc(x+2,y+2,.8,0,7);c.fill();}c.restore();}
+}
 // Makeup is composited on the same portrait used in both views and export.
 c.save();c.globalCompositeOperation='source-over';c.globalAlpha=.52;c.fillStyle=lips[state.lip];c.beginPath();c.moveTo(145,123);c.quadraticCurveTo(151,117,156,121);c.quadraticCurveTo(163,117,168,123);c.quadraticCurveTo(156,134,145,123);c.fill();c.globalAlpha=state.blush/165;for(const x of [131,183]){const g=c.createRadialGradient(x,109,1,x,109,17);g.addColorStop(0,'#ce6c79');g.addColorStop(1,'#ce6c7900');c.fillStyle=g;c.fillRect(x-18,94,36,31);}c.globalAlpha=.9;c.strokeStyle='#2d1c25';c.lineWidth=state.liner===2?2:state.liner===1?1.25:.2;if(state.liner&&faceFrame!==1&&faceFrame!==2){for(const [a,b] of [[124,145],[170,192]]){c.beginPath();c.moveTo(a,93);c.quadraticCurveTo((a+b)/2,87,b,92);if(state.liner===2)c.lineTo(b+4,88);c.stroke();}}c.restore();
 if(state.accessory>=0&&state.accessory<3){const w=images.wardrobe;const col=state.accessory;const boxes=[[35,877,375,336],[440,905,385,276],[866,886,368,345]];const [x,y,sw,sh]=boxes[col];c.drawImage(w,x,y,sw,sh,128,162,60,col===1?27:57);}

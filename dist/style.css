@@ -49,3 +49,8 @@ dialog[open]{animation:fade .3s cubic-bezier(.2,.8,.2,1)}dialog[open]::backdrop{
 #character{left:58%}#partner{left:31%;transform:translateX(-50%) scale(.86);opacity:.9;filter:brightness(.82) drop-shadow(4px 6px 6px #0004);cursor:pointer;animation-delay:-2.5s,-1.2s;transition:filter .25s}#partner:hover{filter:brightness(1) drop-shadow(4px 6px 6px #0004)}
 @media(min-width:721px){.stage>canvas{height:calc(100% - 220px)}}@media(min-width:721px) and (max-width:1100px){.stage>canvas{height:calc(100% - 250px)}}
 @media(max-width:720px){.stage>canvas{height:calc(100% - 180px)}#character{left:60%}#partner{left:30%}}
+/* Tonight's look moves to the right so the character standing behind stays fully visible. */
+.challenge-note{left:auto;right:0;transform:rotate(3deg);width:170px}.stage-signature{display:none}#character{left:55%}#partner{left:27%}
+@media(max-width:1100px){.challenge-note{width:140px}#character{left:50%}#partner{left:22%}}
+@media(max-width:720px){.challenge-note{width:116px;padding:10px 11px}.challenge-note #challenge-title{font-size:21px;padding:8px 0}#character{left:47%}#partner{left:21%}}
+@media(min-width:721px) and (max-width:1100px){.challenge-note{width:112px;padding:10px 11px}.challenge-note #challenge-title{font-size:20px;padding:8px 0}#character{left:45%}#partner{left:21%}}

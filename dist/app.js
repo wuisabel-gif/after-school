@@ -3,7 +3,7 @@ const $=s=>document.querySelector(s),clone=o=>structuredClone(o);
 const initial={outfit:0,lip:4,blush:35,liner:2,hair:0,shoes:0,accessory:0,hairstyle:0,earrings:-1,bracelet:-1,pose:0,expression:0};
 let jewelryCategory='accessories',styleFilter='all';
 // Two characters: `state` is whoever is being styled, `other` is the Nana waiting behind her.
-const hachiInitial={...initial,outfit:6,lip:1,blush:45,liner:0,hair:1,hairstyle:1,accessory:2,earrings:2,expression:3};
+const hachiInitial={...initial,face:1,outfit:6,lip:1,blush:45,liner:0,hair:1,hairstyle:1,accessory:2,earrings:2,expression:3};
 let who='nana',other=clone(hachiInitial);const names={nana:'Nana',hachi:'Hachi'};
 function swapCharacter(){[state,other]=[other,state];who=who==='nana'?'hachi':'nana';history=[];future=[];render();persist();toast('Now styling '+names[who]+'.');}
 let state=clone(initial),history=[],category='clothes',challenge=0,looks=[],ready=false,toastTimer;
@@ -26,9 +26,10 @@ const migrate=s=>({...initial,...s});
 try{const data=JSON.parse(localStorage.getItem('after-school-v1')||'null');if(valid(data?.state))state=migrate(data.state);if(valid(data?.other))other=migrate(data.other);if(data?.who==='hachi')who='hachi';if(Array.isArray(data?.looks))looks=data.looks.filter(l=>valid(l.state)&&typeof l.name==='string').slice(0,12).map(l=>({...l,state:migrate(l.state)}));if(Number.isInteger(data?.challenge)&&data.challenge>=0&&data.challenge<challenges.length)challenge=data.challenge;if(data?.challenge===undefined)challenge=daily;if(Number.isInteger(data?.streak?.days)&&Number.isInteger(data?.streak?.last))streak=data.streak;if(Array.isArray(data?.done))done=data.done.filter(i=>Number.isInteger(i)&&i>=0&&i<challenges.length);}catch{}
 // Shared look: #<base64 json> in the URL loads that look, then the hash is cleared.
 try{const h=JSON.parse(atob(location.hash.slice(1)));if(valid(h)){state=migrate(h);window.history.replaceState(null,'',location.pathname);setTimeout(()=>toast('Shared look loaded.'),300);}}catch{}
+state.face=who==='hachi'?1:0;other.face=1-state.face;
 function persist(){try{localStorage.setItem('after-school-v1',JSON.stringify({state,other,who,looks,challenge,done,streak}));return true;}catch{toast('Browser storage is unavailable. You can still download your look.');return false;}}
 function toast(text){$('#toast').textContent=text;$('#toast').classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('visible'),3000);}
-function change(patch){future.length=0;history.push(clone(state));if(history.length>60)history.shift();Object.assign(state,patch);render();persist();if(!calm.matches&&['outfit','pose','hairstyle'].some(k=>k in patch))$('#character').animate([{scale:.965,opacity:.55,filter:'drop-shadow(5px 8px 7px #0004) brightness(1.15)'},{scale:1,opacity:1}],{duration:420,easing:'cubic-bezier(.2,.9,.25,1.15)'});}
+function change(patch){future.length=0;history.push(clone(state));if(history.length>60)history.shift();Object.assign(state,patch);state.face=who==='hachi'?1:0;render();persist();if(!calm.matches&&['outfit','pose','hairstyle'].some(k=>k in patch))$('#character').animate([{scale:.965,opacity:.55,filter:'drop-shadow(5px 8px 7px #0004) brightness(1.15)'},{scale:1,opacity:1}],{duration:420,easing:'cubic-bezier(.2,.9,.25,1.15)'});}
 // Idle life: breathing head bob, slight sway and blinks. Saved looks and exports stay still.
 const calm=matchMedia('(prefers-reduced-motion: reduce)');let nextBlink=2500;
 function idle(t){requestAnimationFrame(idle);if(!ready||calm.matches||document.hidden)return;const s=t/1000;if(t>nextBlink+150)nextBlink=t+2200+Math.random()*3500;const blink=t>nextBlink&&state.expression<2;drawViews(state,{headY:-.9-.9*Math.sin(s*1.9),tilt:.014*Math.sin(s*.75),faceFrame:blink?2:undefined});}
