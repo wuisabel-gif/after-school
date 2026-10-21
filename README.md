@@ -9,6 +9,8 @@ This edition uses complete outfit sprites, rather than freely mixing every top a
 
 **日本語:** The whole game is available in Japanese. Use the 日本語 / EN button in the header, or open the game with `?lang=ja`. Your choice is remembered.
 
+**Voices:** Story chapters are narrated, and Nana and Hachi each say a line when you switch to them or earn four stars, in English or Japanese. The 🔊 button mutes them. Lines are prerecorded with macOS voices; regenerate them with `node scripts/make-voices.mjs`.
+
 ## Run
 Serve `dist/` with any static server, for example `python3 -m http.server 5174 --directory dist`. No build, API key, backend or account is required by the game. Hosting access may depend on the site's sharing settings. Saved data stays in localStorage; clearing browser data removes the album.
 
