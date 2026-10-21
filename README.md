@@ -7,6 +7,8 @@ Pick from nine coordinated outfits, with Punk and Romantic wardrobe filters. Cha
 
 This edition uses complete outfit sprites, rather than freely mixing every top and bottom. Hair controls offer a tousled bob, long waves, high ponytail and twin braids, each with four colors. Punk looks offer three platform-boot finishes; romantic looks have coordinated shoes. Makeup, hair, jewelry, pose and facial expression are reflected in the close-up, saved look and downloaded portrait.
 
+**日本語:** The whole game is available in Japanese. Use the 日本語 / EN button in the header, or open the game with `?lang=ja`. Your choice is remembered.
+
 ## Run
 Serve `dist/` with any static server, for example `python3 -m http.server 5174 --directory dist`. No build, API key, backend or account is required by the game. Hosting access may depend on the site's sharing settings. Saved data stays in localStorage; clearing browser data removes the album.
 
