@@ -13,6 +13,8 @@ This edition uses complete outfit sprites, rather than freely mixing every top a
 
 **Cutscenes:** Starting a story chapter plays a short scene: both Nanas on the dressing-room set, a slow push-in, the chapter title and narrated subtitles. Press Skip or Escape to jump straight to styling.
 
+**Record your look:** In the save dialog, Record video captures six seconds of your styled character on the set, with her voice line, and downloads it (MP4 where the browser supports it, otherwise WebM).
+
 ## Run
 Serve `dist/` with any static server, for example `python3 -m http.server 5174 --directory dist`. No build, API key, backend or account is required by the game. Hosting access may depend on the site's sharing settings. Saved data stays in localStorage; clearing browser data removes the album.
 
