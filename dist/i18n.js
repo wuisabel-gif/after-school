@@ -12,7 +12,7 @@ export const ja={
 'Undo':'元に戻す','Redo':'やり直す','Undo (Cmd/Ctrl+Z)':'元に戻す (Cmd/Ctrl+Z)','Redo (Cmd/Ctrl+Shift+Z)':'やり直す (Cmd/Ctrl+Shift+Z)','Random look':'ランダム','Save look':'ルックを保存',
 'THE WARDROBE':'ワードローブ','EVERY OUTFIT':'服が変われば','A DIFFERENT YOU':'私も変わる','Wardrobe category':'ワードローブのカテゴリー','Clothes':'服','Shoes':'靴','Accessories':'アクセサリー','All':'すべて','Punk':'パンク','Romantic':'ロマンチック','Necklaces':'ネックレス','Earrings':'イヤリング','Bracelets':'ブレスレット','SAME DREAMS':'同じ夢','MORE OUTFITS':'もっと服を','Close dialog':'閉じる',
 'Choose a complete outfit, then make it yours.':'コーディネートを選んで、自分らしく仕上げよう。','Romantic outfits include matching Mary Janes or ballet flats. Boot finishes apply to punk outfits.':'ロマンチックな服にはおそろいのメリージェーンかバレエシューズが付いています。ブーツの色はパンク系の服に使えます。','Your platform boots, in three finishes.':'厚底ブーツ、三色から。','Mix a necklace, earrings and a bracelet.':'ネックレス、イヤリング、ブレスレットを組み合わせよう。',
-'Sound on':'音声オン','Sound off':'音声オフ','Language':'言語',
+'Sound on':'音声オン','Sound off':'音声オフ','Music on':'音楽オン','Music off':'音楽オフ','Language':'言語',
 // Wardrobe
 'Leather jacket':'レザージャケット','Rebel at heart':'心は反逆児','Lace blouse':'レースブラウス','Soft strength':'やさしい強さ','Rose cardigan':'ローズのカーディガン','A warmer you':'ぬくもりのある私','Plaid skirt':'チェックのスカート','Classic chaos':'定番のカオス','Wide-leg jeans':'ワイドジーンズ','Everyday mood':'いつもの気分','Slip dress':'スリップドレス','For later':'夜のために','Pink ribbon dress':'ピンクのリボンドレス','Sweet as a daydream':'白昼夢みたいに甘く','Floral skirt':'花柄のスカート','Garden romance':'庭のロマンス','Lavender cardigan':'ラベンダーのカーディガン','Soft little moments':'やわらかな瞬間',
 'Black leather':'ブラックレザー','The original':'オリジナル','Cherry leather':'チェリーレザー','A darker romance':'ダークなロマンス','Ivory leather':'アイボリーレザー','A softer edge':'やわらかなエッジ',
