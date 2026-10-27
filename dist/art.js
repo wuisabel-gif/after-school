@@ -3,6 +3,7 @@ export const images = {};
 const poseCenters={};
 export async function loadArt(){await Promise.all(['characters','wardrobe','dressing-room','hairstyles','jewelry','romantic','pose-hip','pose-shift-punk','pose-shift-romantic','expressions','hachi-hairstyles','hachi-expressions'].map(name=>new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>{images[name]=image;if(name.startsWith('pose-')){const count=name==='pose-shift-punk'?5:name==='pose-shift-romantic'?4:9,probe=document.createElement('canvas');probe.width=image.width;probe.height=image.height;const ctx=probe.getContext('2d');ctx.drawImage(image,0,0);const row=ctx.getImageData(0,50,image.width,1).data,cell=image.width/count;poseCenters[name]=Array.from({length:count},(_,i)=>{let min=Infinity,max=-Infinity;for(let x=Math.ceil(i*cell);x<Math.floor((i+1)*cell);x++)if(row[x*4+3]>60){min=Math.min(min,x);max=Math.max(max,x);}return min===Infinity?(i+.5)*cell:(min+max)/2;});}resolve()};image.onerror=()=>reject(new Error(`Could not load ${name}`));image.src=`assets/${name}.webp`;})));}
 const scratch=document.createElement('canvas');scratch.width=300;scratch.height=900;
+const headLayer=document.createElement('canvas');headLayer.width=300;headLayer.height=225;
 const expressionLayer=document.createElement('canvas');expressionLayer.width=300;expressionLayer.height=200;
 const expressionMask=document.createElement('canvas');expressionMask.width=300;expressionMask.height=200;
 function removePoseIslands(c){
@@ -31,11 +32,14 @@ export function renderDoll(state){const c=scratch.getContext('2d',{willReadFrequ
   c.clearRect(78,145,48,13); c.clearRect(190,145,48,13);
   const head=images[state.face===1?'hachi-hairstyles':'hairstyles'],cell=head.width/4;
   c.save(); c.beginPath(); c.rect(0,0,300,145); c.rect(0,145,137,100); c.moveTo(137,145);c.lineTo(177,145);c.lineTo(168,173);c.lineTo(146,173);c.closePath();c.rect(177,145,123,100); c.clip();
-  c.drawImage(head,state.hairstyle*cell,0,cell,head.height,71,0,168,224);
+  // Hair color is applied to the head layer alone, so dark tops under it keep their color.
+  const h=headLayer.getContext('2d',{willReadFrequently:true});h.clearRect(0,0,300,225);h.drawImage(head,state.hairstyle*cell,0,cell,head.height,71,0,168,224);
+  if(state.hair){const frame=h.getImageData(0,0,300,225),p=frame.data,tint=[[0,0,0],[30,10,2],[53,7,18],[86,58,24]][state.hair];for(let y=0;y<225;y++)for(let x=0;x<300;x++){const i=(y*300+x)*4;if(p[i+3]<30||(y>83&&y<104&&x>117&&x<196)||(y>110&&y<149&&x>120&&x<193))continue;const light=(p[i]+p[i+1]+p[i+2])/3;if(light>=94||Math.max(p[i],p[i+1],p[i+2])-Math.min(p[i],p[i+1],p[i+2])>=35)continue;const amount=(.45+light/150)*Math.min(1,(100-light)/24);for(let k=0;k<3;k++)p[i+k]=clamp(p[i+k]+tint[k]*amount);}h.putImageData(frame,0,0);}
+  c.drawImage(headLayer,0,0);
   c.restore();
 }
-// Local masks tint only existing illustrated hair/boot pixels; preserve their ink and texture.
-if(state.hair||(state.shoes&&state.outfit<6)){const frame=c.getImageData(0,0,300,900),p=frame.data;const hairTints=[[0,0,0],[30,10,2],[53,7,18],[86,58,24]],shoeTints=[[0,0,0],[58,6,15],[110,97,75]];for(let y=0;y<900;y++)for(let x=0;x<300;x++){const i=(y*300+x)*4;if(p[i+3]<30)continue;const light=(p[i]+p[i+1]+p[i+2])/3;const facialFeature=(y>83&&y<104&&x>117&&x<196)||(y>110&&y<149&&x>120&&x<193);const neutralDark=light<94&&Math.max(p[i],p[i+1],p[i+2])-Math.min(p[i],p[i+1],p[i+2])<35;const isHair=y<225&&x>70&&x<240&&!facialFeature&&neutralDark;const isBoot=state.outfit<6&&y>(state.outfit===4?817:700)&&x>91&&x<215;const tint=isHair?hairTints[state.hair]:isBoot?shoeTints[state.shoes]:null;if(tint){const fade=isHair?Math.min(1,(100-light)/24):Math.min(1,Math.max(0,(y-(state.outfit===4?817:700))/10));const amount=(.45+light/150)*fade;for(let k=0;k<3;k++)p[i+k]=clamp(p[i+k]+tint[k]*amount);}}c.putImageData(frame,0,0);}
+// Boot finishes tint only the illustrated boot pixels; preserve their ink and texture.
+if(state.shoes&&state.outfit<6){const top=state.outfit===4?817:700,frame=c.getImageData(0,top,300,900-top),p=frame.data,tint=[[0,0,0],[58,6,15],[110,97,75]][state.shoes];for(let y=top;y<900;y++)for(let x=92;x<215;x++){const i=((y-top)*300+x)*4;if(p[i+3]<30)continue;const light=(p[i]+p[i+1]+p[i+2])/3,amount=(.45+light/150)*Math.min(1,(y-top)/10);for(let k=0;k<3;k++)p[i+k]=clamp(p[i+k]+tint[k]*amount);}c.putImageData(frame,0,top);}
 const faceFrame=state.expression??state.faceFrame??0;
 if(faceFrame>0){
 const face=images[state.face===1?'hachi-expressions':'expressions'],cell=face.width/4;
