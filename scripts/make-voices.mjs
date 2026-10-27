@@ -3,13 +3,14 @@
 import {execFileSync} from 'node:child_process';
 import {existsSync,mkdirSync,rmSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
-import {story,lines} from '../dist/story.js';
+import {story,lines,scenes} from '../dist/story.js';
 import {ja} from '../dist/i18n.js';
 
 const voices={en:{narrator:'Samantha',nana:'Sandy (English (US))',hachi:'Flo (English (US))'},ja:{narrator:'Kyoko',nana:'Sandy (Japanese (Japan))',hachi:'Flo (Japanese (Japan))'}};
 const jobs=[];
 story.forEach(([,,intro,outro],i)=>{jobs.push([`ch${i+1}-intro`,'narrator',intro],[`ch${i+1}-outro`,'narrator',outro]);});
 for(const [key,text] of Object.entries(lines))jobs.push([key,key.split('-')[0],text]);
+scenes.forEach((sc,i)=>{sc.lines.forEach(([who,text],k)=>jobs.push([`ch${i+1}-l${k+1}`,who,text]));sc.choices.forEach((c,k)=>jobs.push([`ch${i+1}-c${k+1}`,c.reply[0],c.reply[1]]));});
 
 for(const lang of ['en','ja']){
   const dir=fileURLToPath(new URL(`../dist/voice/${lang}/`,import.meta.url));mkdirSync(dir,{recursive:true});
