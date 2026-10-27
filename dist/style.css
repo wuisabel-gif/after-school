@@ -74,3 +74,4 @@ header>.lang+.sound,header>.sound+.help{margin-left:-14px}
 #music[aria-pressed=false]{opacity:.55}#music[aria-pressed=true]{background:var(--wine);color:var(--paper)}
 .judge{border:1px solid var(--line);padding:12px 16px;margin:4px 0 12px;background:#fff6}.judge strong{font:600 14px 'DM Sans',sans-serif;color:var(--wine)}.judge ul{margin:8px 0 0;padding-left:18px;font:14px/1.7 'DM Sans',sans-serif}.judge li.good::marker{content:'✦ ';color:var(--wine)}.judge li.tip::marker{content:'→ ';color:var(--muted)}
 .item.locked{opacity:.5}.item.locked canvas{filter:grayscale(1) blur(1px)}.item.locked:after{content:'🔒';position:absolute;right:8px;top:8px;font-size:15px}
+#cut-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}#cut-actions .dialog-button{margin:0;font-size:16px;padding:10px 18px}

@@ -11,7 +11,7 @@ This edition uses complete outfit sprites, rather than freely mixing every top a
 
 **Voices:** Story chapters are narrated, and Nana and Hachi each say a line when you switch to them or earn four stars, in English or Japanese. The 🔊 button mutes them. Lines are prerecorded with macOS voices; regenerate them with `node scripts/make-voices.mjs`.
 
-**Cutscenes:** Starting a story chapter plays a short scene: both Nanas on the dressing-room set, a slow push-in, the chapter title and narrated subtitles. Press Skip or Escape to jump straight to styling.
+**Cutscenes:** Starting a story chapter plays a short scene: both Nanas on the dressing-room set, a slow push-in, the chapter title and narrated subtitles. Press Skip or Escape to jump straight to styling. After the narration, Nana and Hachi talk in voiced lines and you choose how to reply; your choice changes how the chapter ends.
 
 **Record your look:** In the save dialog, Record video captures six seconds of your styled character on the set, with her voice line, and downloads it (MP4 where the browser supports it, otherwise WebM).
 
