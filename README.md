@@ -9,7 +9,7 @@ This edition uses complete outfit sprites, rather than freely mixing every top a
 
 **日本語:** The whole game is available in Japanese. Use the 日本語 / EN button in the header, or open the game with `?lang=ja`. Your choice is remembered.
 
-**Voices:** Story chapters are narrated, and Nana and Hachi each say a line when you switch to them or earn four stars, in English or Japanese. The 🔊 button mutes them. Lines are prerecorded with macOS voices; regenerate them with `node scripts/make-voices.mjs`.
+**Voices:** Story chapters are narrated, and Nana and Hachi each say a line when you switch to them or earn four stars, in English or Japanese. The 🔊 button mutes them. Lines are prerecorded with macOS voices; regenerate them with `node scripts/make-voices.mjs`. For natural-sounding voices, run `node scripts/make-voices.mjs --export` to get `scripts/voice-lines.csv` (every line, speaker and file name), generate the audio with a voice service such as ElevenLabs, save each file under the name in the `file` column, then run `node scripts/make-voices.mjs --import <folder>`. The game picks the new files up without code changes.
 
 **Cutscenes:** Starting a story chapter plays a short scene: both Nanas on the dressing-room set, a slow push-in, the chapter title and narrated subtitles. Press Skip or Escape to jump straight to styling. After the narration, Nana and Hachi talk in voiced lines and you choose how to reply; your choice changes how the chapter ends.
 
